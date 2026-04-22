@@ -53,36 +53,43 @@ def estrategia_minimax(tateti: Tateti, estado: List[List[str]]) -> Tuple[int, in
     # 3. La función debe retornar una tupla (fila, columna) con la mejor jugada
 
     #desde aca agregue cosas con las funciones max y min comentados funciona pero nunca responde la ia con un movimiento
-    def MAX(tateti , estado): return valor
-        if problema.TEST-TERMINAL(estado) then
-            return problema.UTILIDAD(estado,MAX)
-        valor = -1
-        forall acción in problema.ACCIONES(estado) do
-            sucesor = problema.RESULTADO(estado, acción)
-            valor = max(valor,
-                        MIN(problema, sucesor)
-        return valor
-
-    def MIN(tateti, estado) return valor
-        if problema.TEST-TERMINAL(estado) then
-            return problema.UTILIDAD(estado,MAX)
-        valor = +1
-        forall acción in problema.ACCIONES(estado) do
-            sucesor = problema.RESULTADO(estado, acción)
-            valor = min(valor,
-                        MAX(problema, sucesor)
-        return valor
-
+#def estrategia_minimax(tateti: Tateti, estado: List[List[str]]) -> Tuple[int, int]:
+    """
+    Estrategia minimax: elige la mejor acción usando el algoritmo minimax.
+    """
     
-    if tateti.jugador(estado) == MAX:
-        sucs = {acción: estrategia_minimax-MIN(tateti, tateti.resultado(estado, acción))
-            for acción in tateti.acciones(estado)}
-        return max(sucs, key=sucs.get) # obtiene la clave con el mayor valor
-    if tateti.jugador(estado) == MIN:
-        sucs = {acción: estrategia_minimax-MAX(tateti, tateti.resultado(estado, acción))
-            for acción in tateti.acciones(estado)}
-        return min(sucs, key=sucs.get) # obtiene la clave con el menor valor
+    def max_value(estado_actual):
+        # Usamos el nombre exacto: test_terminal
+        if tateti.test_terminal(estado_actual):
+            return tateti.utilidad(estado_actual, JUGADOR_MAX)
+        
+        v = float('-inf')
+        for accion in tateti.acciones(estado_actual):
+            v = max(v, min_value(tateti.resultado(estado_actual, accion)))
+        return v
 
+    def min_value(estado_actual):
+        if tateti.test_terminal(estado_actual):
+            # Calculamos la utilidad siempre desde la perspectiva de MAX 
+            # para que los valores sean consistentes (1 gana MAX, 0 pierde MAX)
+            return tateti.utilidad(estado_actual, JUGADOR_MAX)
+        
+        v = float('inf')
+        for accion in tateti.acciones(estado_actual):
+            v = min(v, max_value(tateti.resultado(estado_actual, accion)))
+        return v
+
+    # --- Lógica de selección de la mejor jugada ---
+    jugador_actual = tateti.jugador(estado)
+    acciones_posibles = tateti.acciones(estado)
+
+    if jugador_actual == JUGADOR_MAX:
+        # MAX quiere la jugada que le devuelva el mayor valor
+        return max(acciones_posibles, key=lambda a: min_value(tateti.resultado(estado, a)))
+    else:
+        # MIN quiere la jugada que le devuelva el menor valor para MAX
+        return min(acciones_posibles, key=lambda a: max_value(tateti.resultado(estado, a)))
+       
     #Hasta aca, lo de abajo estaba y lo comente para no borrarlo
     """
     la comento para no borrarla
