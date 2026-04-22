@@ -33,7 +33,6 @@ class BreadthFirstSearch:
         # Initialize frontier with the root node
         # TODO Complete the rest!!
 
-        #### desde aca estoy llenando yo
         while not frontier.is_empty():
             node = frontier.remove()
 
@@ -61,5 +60,4 @@ class BreadthFirstSearch:
 
                     frontier.add(child_node)
                            
-        ### hasta aca estoy llenando yo
         return NoSolution(reached)
