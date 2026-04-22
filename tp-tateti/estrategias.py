@@ -52,8 +52,6 @@ def estrategia_minimax(tateti: Tateti, estado: List[List[str]]) -> Tuple[int, in
     # 2. Implementar el algoritmo minimax aquí
     # 3. La función debe retornar una tupla (fila, columna) con la mejor jugada
 
-    #desde aca agregue cosas con las funciones max y min comentados funciona pero nunca responde la ia con un movimiento
-#def estrategia_minimax(tateti: Tateti, estado: List[List[str]]) -> Tuple[int, int]:
     """
     Estrategia minimax: elige la mejor acción usando el algoritmo minimax.
     """
@@ -90,21 +88,4 @@ def estrategia_minimax(tateti: Tateti, estado: List[List[str]]) -> Tuple[int, in
         # MIN quiere la jugada que le devuelva el menor valor para MAX
         return min(acciones_posibles, key=lambda a: max_value(tateti.resultado(estado, a)))
        
-    #Hasta aca, lo de abajo estaba y lo comente para no borrarlo
-    """
-    la comento para no borrarla
-
-    raise NotImplementedError(
-        "\n" + "="*60 +
-        "\n🚫 ALGORITMO MINIMAX NO IMPLEMENTADO" +
-        "\n" + "="*60 +
-        "\n\nPara usar la estrategia Minimax debe implementarla primero." +
-        "\n\nInstrucciones:" +
-        "\n1. Abra el archivo 'estrategias.py'" +
-        "\n2. Busque la función 'estrategia_minimax()'" +
-        "\n3. Elimine la línea 'raise NotImplementedError(...)'" +
-        "\n4. Implemente el algoritmo minimax" +
-        "\n\nMientras tanto, use la 'Estrategia Aleatoria'." +
-        "\n" + "="*60
-    )
-    """
+   
