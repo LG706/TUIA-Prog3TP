@@ -15,7 +15,7 @@ class BreadthFirstSearch:
         Returns:
             Solution: Solution found
         """
-        # Initialize root node
+        # 1. Inicializar nodo raíz (punto de inicio)
         root = Node("", state=grid.initial, cost=0, parent=None, action=None)
 
         # 2. Verificación rápida: ¿el inicio es la meta?
@@ -26,22 +26,22 @@ class BreadthFirstSearch:
         frontier = QueueFrontier()
         frontier.add(root)
 
-        # Initialize reached with the initial state
+        # 4. Mantener registro de nodos ya visitados para evitar ciclos
         reached = {}
         reached[root.state] = root
 
-        # Initialize frontier with the root node
-        # TODO Complete the rest!!
-
+        # 5. Bucle principal de exploración
         while not frontier.is_empty():
             node = frontier.remove()
 
+            # 6. Para cada acción posible desde el estado actual
             for action in grid.actions(node.state):
                 child_state = grid.result(node.state, action)
                 
-                # Usamos el costo real de la celda
+                # 7. Calcular costo acumulado (costo del padre + costo de la celda)
                 child_cost = node.cost + grid.individual_cost(node.state, action)
                 
+                # 8. Crear nodo hijo con la información del camino
                 child_node = Node(
                     "", 
                     action=action,
@@ -50,14 +50,18 @@ class BreadthFirstSearch:
                     parent=node,
                 )
 
+                # 9. Solo explorar si no fue visitado antes (evita ciclos)
                 if child_state not in reached:
                     # Guardamos el nodo en lugar de solo un booleano
                     reached[child_state] = child_node 
 
+                    # 10. Verificar si llegamos a la meta
                     # IMPORTANTE: Usar el nombre de tu método en grid.py
                     if grid.objective_test(child_state):
                         return Solution(child_node, reached)
 
+                    # 11. Agregar a la frontera para explorar sus vecinos
                     frontier.add(child_node)
                            
+        # 12. Si se agotan los nodos sin encontrar la meta, no hay solución
         return NoSolution(reached)
