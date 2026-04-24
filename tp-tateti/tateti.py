@@ -5,37 +5,22 @@ Estados: Matriz 3x3 con "X", "O" y "-" (casilla vacía)
 Acciones: Par ordenado (fila, columna)
 Jugadores: "MAX" (X) y "MIN" (O)
 Utilidad: 1 (gana), 0 (pierde), 0.5 (empate)
-
-Formulación según teoría de juegos:
-- Estado: Representación completa del tablero
-- Acciones: Posiciones vacías donde colocar una ficha
-- Jugador: Determina quién debe mover basado en el conteo de fichas
-- Transición: Resultado de aplicar una acción al estado actual
-- Terminal: Estado donde hay ganador o tablero lleno
-- Utilidad: Valor numérico para evaluar estados terminales
 """
 
 import copy
 from typing import List, Tuple, Optional
 
 # Constantes del juego
-JUGADOR_MAX = "X"  # Jugador que empieza (siempre coloca X primero)
-JUGADOR_MIN = "O"  # Jugador que responde (siempre coloca O después)
-CASILLA_VACIA = "-"  # Representa una casilla disponible
+JUGADOR_MAX = "X"
+JUGADOR_MIN = "O"
+CASILLA_VACIA = "-"
 
 
 class Tateti:
-    """Clase que encapsula toda la lógica del juego Tateti según teoría de juegos
-    
-    Esta clase implementa la formulación del problema como un juego de suma cero
-    donde MAX (X) intenta maximizar su utilidad y MIN (O) intenta minimizarla.
-    
-    Atributos:
-        estado_inicial: Tablero 3x3 vacío al inicio del juego
-    """
+    """Clase que encapsula toda la lógica del juego Tateti"""
     
     def __init__(self):
-        """Inicializa el juego con el estado inicial (tablero vacío)"""
+        """Inicializa el juego con el estado inicial"""
         self.estado_inicial = [[CASILLA_VACIA for _ in range(3)] for _ in range(3)]
 
     def jugador(self, estado: List[List[str]]) -> str:
@@ -43,17 +28,13 @@ class Tateti:
         Determina qué jugador debe mover en el estado dado.
         
         En tateti, MAX (X) siempre empieza. Contamos las fichas para determinar
-        el turno actual: si hay más X que O, es turno de MIN, sino es turno de MAX.
+        el turno actual.
         
         Args:
             estado: Estado actual del tablero
             
         Returns:
             str: JUGADOR_MAX si es turno de MAX, JUGADOR_MIN si es turno de MIN
-            
-        Ejemplo:
-            estado = [['X', '-', '-'], ['-', 'O', '-'], ['-', '-', '-']]
-            jugador(estado) -> 'O' (porque hay más X que O)
         """
         contador_x = sum(fila.count(JUGADOR_MAX) for fila in estado)
         contador_o = sum(fila.count(JUGADOR_MIN) for fila in estado)
@@ -66,17 +47,11 @@ class Tateti:
         """
         Retorna todas las acciones posibles en el estado dado.
         
-        Una acción es un par (fila, columna) correspondiente a una casilla vacía.
-        
         Args:
             estado: Estado actual del tablero
             
         Returns:
             List[Tuple[int, int]]: Lista de pares (fila, columna) de casillas vacías
-            
-        Ejemplo:
-            estado = [['X', '-', '-'], ['-', 'O', '-'], ['-', '-', '-']]
-            acciones(estado) -> [(0,1), (0,2), (1,0), (1,2), (2,0), (2,1), (2,2)]
         """
         acciones_posibles = []
         for fila in range(3):
@@ -97,12 +72,7 @@ class Tateti:
             List[List[str]]: Nuevo estado después de aplicar la acción
             
         Raises:
-            ValueError: Si la acción no es válida (fuera de rango o casilla ocupada)
-            
-        Ejemplo:
-            estado = [['X', '-', '-'], ['-', 'O', '-'], ['-', '-', '-']]
-            accion = (0, 1)
-            resultado(estado, accion) -> [['X', 'X', '-'], ['-', 'O', '-'], ['-', '-', '-']]
+            ValueError: Si la acción no es válida
         """
         fila, columna = accion
         
@@ -113,7 +83,7 @@ class Tateti:
         if estado[fila][columna] != CASILLA_VACIA:
             raise ValueError(f"Casilla ({fila}, {columna}) ya está ocupada")
         
-        # Crear nuevo estado (copia profunda para no modificar el original)
+        # Crear nuevo estado
         nuevo_estado = copy.deepcopy(estado)
         nuevo_estado[fila][columna] = self.jugador(estado)
         
@@ -124,7 +94,7 @@ class Tateti:
         Determina si el estado es terminal (juego terminado).
         
         Un estado es terminal si:
-        1. Hay un ganador (tres en línea en fila, columna o diagonal)
+        1. Hay un ganador (tres en línea)
         2. No hay un ganador y el tablero está lleno (empate)
         
         Args:
@@ -132,10 +102,6 @@ class Tateti:
             
         Returns:
             bool: True si el juego terminó, False si continúa
-            
-        Ejemplo:
-            estado = [['X', 'X', 'X'], ['O', 'O', '-'], ['-', '-', '-']]
-            test_terminal(estado) -> True (X ganó)
         """
         # Verificar si hay ganador
         if self._hay_ganador(estado) is not None:
@@ -150,11 +116,6 @@ class Tateti:
         """
         Calcula la utilidad de un estado terminal desde la perspectiva del jugador especificado.
         
-        La utilidad es una medida numérica que indica qué tan bueno es el estado para un jugador:
-        - 1.0: El jugador ganó
-        - 0.0: El jugador perdió
-        - 0.5: Empate
-        
         Args:
             estado: Estado terminal del juego
             jugador: Jugador desde cuya perspectiva calcular la utilidad (por defecto JUGADOR_MAX)
@@ -163,12 +124,7 @@ class Tateti:
             float: 1.0 si el jugador gana, 0.0 si el jugador pierde, 0.5 si empate
             
         Raises:
-            ValueError: Si el estado no es terminal o el jugador es inválido
-            
-        Ejemplo:
-            estado = [['X', 'X', 'X'], ['O', 'O', '-'], ['-', '-', '-']]
-            utilidad(estado, 'X') -> 1.0 (X ganó)
-            utilidad(estado, 'O') -> 0.0 (O perdió)
+            ValueError: Si el estado no es terminal
         """
         if not self.test_terminal(estado):
             raise ValueError("No se puede calcular utilidad en estado no terminal")
@@ -187,11 +143,6 @@ class Tateti:
     def _hay_ganador(self, estado: List[List[str]]) -> Optional[str]:
         """
         Función auxiliar para verificar si hay un ganador.
-        
-        Verifica todas las posibles combinaciones de tres en línea:
-        - 3 filas
-        - 3 columnas  
-        - 2 diagonales
         
         Args:
             estado: Estado del tablero
