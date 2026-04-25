@@ -22,7 +22,35 @@ class DepthFirstSearch:
         expanded = dict()
 
         # Initialize frontier with the root node
-        # TODO Complete the rest!!
-        # ...
+        frontier = [root]
+
+        while frontier:
+            # Sacar el último (LIFO)
+            node = frontier.pop()
+
+            # Si ya lo visite, lo salteo
+            if node.state in expanded:
+                continue
+
+            # Marco como visitado
+            expanded[node.state] = True
+
+            # Chequeo objetivo
+            if grid.objective_test(node.state):
+                return Solution(node, expanded)
+
+            # Expando vecinos
+            for action in grid.actions(node.state):
+                new_state = grid.result(node.state, action)
+
+                if new_state not in expanded:
+                    child = Node(
+                        "",
+                        state=new_state,
+                        cost=node.cost + 1,  # o el costo que corresponda
+                        parent=node,
+                        action=action
+                    )
+                    frontier.append(child)
 
         return NoSolution(expanded)
