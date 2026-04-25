@@ -23,7 +23,33 @@ class GreedyBestFirstSearch:
         reached[root.state] = root.cost
 
         # Initialize frontier with the root node
-        # TODO Complete the rest!!
-        # ...
+        frontier = PriorityQueueFrontier()
+        frontier.add(root, grid.heuristic(root.state))
+
+        while len(frontier.frontier) > 0:
+            node = frontier.pop()
+
+            # Llegó al objetivo
+            if grid.objective_test(node.state):
+                return Solution(node, reached)
+
+            # Expandir vecinos
+            for action in grid.actions(node.state):
+                new_state = grid.result(node.state, action)
+                new_cost = node.cost + 1
+
+                if new_state not in reached or new_cost < reached[new_state]:
+                    child = Node(
+                        "",
+                        state=new_state,
+                        cost=new_cost,
+                        parent=node,
+                        action=action
+                    )
+
+                    reached[new_state] = new_cost
+
+                    # PRIORIDAD = heurística
+                    frontier.add(child, grid.heuristic(new_state))
 
         return NoSolution(reached)

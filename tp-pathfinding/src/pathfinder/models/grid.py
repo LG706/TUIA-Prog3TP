@@ -111,3 +111,17 @@ class Grid:
 
     def __repr__(self) -> str:
         return f"Grid([[...], ...], {self.initial}, {self.end})"
+    
+    def heuristic(self, pos: tuple[int, int]) -> int:
+        """Estimate the cost from a cell to the goal using Manhattan distance
+
+        Args:
+            pos (tuple[int, int]): Cell position
+
+        Returns:
+            int: Estimated cost from the current cell to the goal
+        """
+        row, col = pos
+        goal_row, goal_col = self.end
+
+        return abs(row - goal_row) + abs(col - goal_col)
